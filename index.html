@@ -1,0 +1,2231 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Base-n Blocks Practice</title>
+
+  <style>
+    :root {
+      --page-bg: #f4f7fb;
+      --card: #ffffff;
+      --text: #172033;
+      --muted: #667085;
+
+      --border: #dbe2ea;
+      --border-dark: #cbd5e1;
+
+      --blue: #2563eb;
+      --blue-dark: #1d4ed8;
+      --blue-soft: #eff6ff;
+
+      --green: #166534;
+      --green-bg: #f0fdf4;
+      --green-border: #bbf7d0;
+
+      --red: #991b1b;
+      --red-bg: #fff7f7;
+      --red-border: #fecaca;
+
+      --flat: #dbeafe;
+      --long: #dcfce7;
+      --unit: #fef3c7;
+
+      --shadow:
+        0 1px 2px rgba(16, 24, 40, 0.04),
+        0 4px 14px rgba(16, 24, 40, 0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+
+      background: var(--page-bg);
+      color: var(--text);
+
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .app {
+      width: min(1000px, calc(100% - 28px));
+      margin: 32px auto;
+    }
+
+    .card {
+      background: var(--card);
+
+      border: 1px solid var(--border);
+      border-radius: 18px;
+
+      box-shadow: var(--shadow);
+    }
+
+    /* ==================================================
+       SETTINGS
+       ================================================== */
+
+    .settings-card {
+      padding: 20px 22px;
+      margin-bottom: 18px;
+    }
+
+    .section-label {
+      margin-bottom: 13px;
+
+      text-align: center;
+
+      font-weight: 700;
+    }
+
+    .base-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 9px;
+    }
+
+    .base-button {
+      min-width: 80px;
+      min-height: 44px;
+
+      padding: 8px 14px;
+
+      border: 1.5px solid var(--border-dark);
+      border-radius: 10px;
+
+      background: white;
+      color: var(--text);
+
+      font-weight: 650;
+
+      cursor: pointer;
+
+      transition:
+        background 0.15s ease,
+        border-color 0.15s ease,
+        color 0.15s ease,
+        transform 0.08s ease;
+    }
+
+    .base-button:hover {
+      background: #f8fafc;
+    }
+
+    .base-button:active {
+      transform: translateY(1px);
+    }
+
+    .base-button.active {
+      border-color: var(--blue);
+
+      background: var(--blue-soft);
+      color: var(--blue-dark);
+    }
+
+    .settings-note {
+      margin-top: 12px;
+
+      text-align: center;
+
+      color: var(--muted);
+
+      font-size: 0.84rem;
+    }
+
+    /* ==================================================
+       QUESTION
+       ================================================== */
+
+    .practice-card {
+      padding: 24px;
+    }
+
+    .instruction {
+      text-align: center;
+
+      color: var(--muted);
+
+      font-size: 1rem;
+    }
+
+    .problem-number {
+      margin: 18px 0 22px;
+
+      text-align: center;
+
+      font-size: clamp(3.5rem, 10vw, 5.8rem);
+      font-weight: 750;
+      line-height: 1;
+    }
+
+    .problem-number sub,
+    .math-number sub {
+      margin-left: 2px;
+
+      font-size: 0.4em;
+      font-weight: 650;
+
+      vertical-align: -0.25em;
+    }
+
+    /* ==================================================
+       BLOCK BANK
+       ================================================== */
+
+    .bank-title {
+      margin-bottom: 10px;
+
+      text-align: center;
+
+      font-weight: 700;
+    }
+
+    .bank-note {
+      margin-bottom: 14px;
+
+      text-align: center;
+
+      color: var(--muted);
+
+      font-size: 0.84rem;
+    }
+
+    .block-bank {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+
+      margin-bottom: 18px;
+    }
+
+    .bank-item {
+      min-height: 150px;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      gap: 10px;
+
+      padding: 14px;
+
+      border: 1px solid var(--border);
+      border-radius: 12px;
+
+      background: #fbfcfe;
+
+      cursor: grab;
+
+      user-select: none;
+    }
+
+    .bank-item:hover {
+      border-color: var(--border-dark);
+      background: #f8fafc;
+    }
+
+    .bank-item:active {
+      cursor: grabbing;
+    }
+
+    .bank-name {
+      font-weight: 750;
+    }
+
+    .bank-value {
+      color: var(--muted);
+
+      font-size: 0.84rem;
+    }
+
+    /* ==================================================
+       BASE BLOCK VISUALS
+       ================================================== */
+
+    .block-visual {
+      display: grid;
+
+      border: 1.5px solid #64748b;
+
+      overflow: hidden;
+
+      flex: 0 0 auto;
+    }
+
+    .block-visual span {
+      display: block;
+
+      border-right: 1px solid rgba(71, 85, 105, 0.45);
+      border-bottom: 1px solid rgba(71, 85, 105, 0.45);
+    }
+
+    .block-visual.flat {
+      width: 92px;
+      height: 92px;
+
+      background: var(--flat);
+    }
+
+    .block-visual.long {
+      width: 104px;
+      height: 24px;
+
+      background: var(--long);
+    }
+
+    .block-visual.unit {
+      width: 26px;
+      height: 26px;
+
+      background: var(--unit);
+    }
+
+    /* ==================================================
+       WORKSPACE
+       ================================================== */
+
+    .workspace-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+
+      margin-bottom: 8px;
+    }
+
+    .workspace-title {
+      font-weight: 750;
+    }
+
+    .clear-button {
+      min-height: 40px;
+
+      padding: 7px 13px;
+
+      border: 1px solid var(--border-dark);
+      border-radius: 9px;
+
+      background: white;
+      color: var(--text);
+
+      font-weight: 650;
+
+      cursor: pointer;
+    }
+
+    .clear-button:hover {
+      background: #f8fafc;
+    }
+
+    .workspace-note {
+      margin-bottom: 9px;
+
+      color: var(--muted);
+
+      font-size: 0.83rem;
+    }
+
+    .workspace {
+      min-height: 280px;
+
+      display: flex;
+      flex-wrap: wrap;
+      align-content: flex-start;
+      gap: 12px;
+
+      padding: 18px;
+
+      border: 2px dashed var(--border-dark);
+      border-radius: 14px;
+
+      background:
+        linear-gradient(
+          90deg,
+          rgba(226, 232, 240, 0.25) 1px,
+          transparent 1px
+        ),
+        linear-gradient(
+          rgba(226, 232, 240, 0.25) 1px,
+          transparent 1px
+        );
+
+      background-size: 24px 24px;
+
+      transition:
+        border-color 0.15s ease,
+        background-color 0.15s ease;
+    }
+
+    .workspace.drag-over {
+      border-color: var(--blue);
+
+      background-color: var(--blue-soft);
+    }
+
+    .placed-block {
+      position: relative;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 5px;
+
+      border: 0;
+      border-radius: 8px;
+
+      background: transparent;
+
+      cursor: pointer;
+    }
+
+    .placed-block:hover {
+      background: rgba(15, 23, 42, 0.05);
+    }
+
+    .placed-block::after {
+      content: "×";
+
+      position: absolute;
+      top: -6px;
+      right: -5px;
+
+      width: 20px;
+      height: 20px;
+
+      display: none;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 50%;
+
+      background: #ef4444;
+      color: white;
+
+      font-size: 0.8rem;
+      font-weight: 800;
+    }
+
+    .placed-block:hover::after {
+      display: flex;
+    }
+
+    .empty-message {
+      width: 100%;
+
+      align-self: center;
+
+      text-align: center;
+
+      color: var(--muted);
+
+      font-size: 0.92rem;
+    }
+
+    /* ==================================================
+       COUNT SUMMARY
+       ================================================== */
+
+    .count-summary {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+
+      margin-top: 12px;
+    }
+
+    .count-chip {
+      min-width: 100px;
+
+      padding: 8px 12px;
+
+      border: 1px solid var(--border);
+      border-radius: 9px;
+
+      background: #f8fafc;
+
+      text-align: center;
+
+      color: var(--muted);
+
+      font-size: 0.83rem;
+    }
+
+    .count-chip strong {
+      color: var(--text);
+
+      font-size: 1rem;
+    }
+
+    /* ==================================================
+       CONTROLS
+       ================================================== */
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+
+      margin-top: 20px;
+    }
+
+    .control-button {
+      min-height: 48px;
+
+      padding: 10px 22px;
+
+      border-radius: 10px;
+
+      font-weight: 700;
+
+      cursor: pointer;
+
+      transition:
+        background 0.15s ease,
+        border-color 0.15s ease,
+        transform 0.08s ease;
+    }
+
+    .control-button:active {
+      transform: translateY(1px);
+    }
+
+    .check-button {
+      border: 1px solid var(--blue);
+
+      background: var(--blue);
+      color: white;
+    }
+
+    .check-button:hover {
+      background: var(--blue-dark);
+    }
+
+    .next-button {
+      border: 1px solid var(--border-dark);
+
+      background: white;
+      color: var(--text);
+    }
+
+    .next-button:hover {
+      background: #f8fafc;
+    }
+
+    /* ==================================================
+       FEEDBACK
+       ================================================== */
+
+    .feedback {
+      display: none;
+
+      margin-top: 18px;
+
+      border-radius: 12px;
+
+      line-height: 1.5;
+    }
+
+    .feedback.correct {
+      display: block;
+
+      padding: 15px 17px;
+
+      border: 1px solid var(--green-border);
+
+      background: var(--green-bg);
+      color: var(--green);
+    }
+
+    .feedback.incorrect {
+      display: block;
+
+      border: 1px solid var(--red-border);
+
+      background: var(--red-bg);
+
+      overflow: hidden;
+    }
+
+    .feedback-head {
+      padding: 15px 17px;
+
+      color: var(--red);
+    }
+
+    .feedback-work {
+      padding: 16px 17px;
+
+      border-top: 1px solid var(--red-border);
+
+      background: white;
+      color: var(--text);
+    }
+
+    .needed-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+
+      margin-top: 12px;
+    }
+
+    .needed-card {
+      padding: 11px;
+
+      border: 1px solid var(--border);
+      border-radius: 10px;
+
+      text-align: center;
+    }
+
+    .needed-card span {
+      display: block;
+
+      color: var(--muted);
+
+      font-size: 0.78rem;
+    }
+
+    .needed-card strong {
+      display: block;
+
+      margin-top: 3px;
+
+      font-size: 1.25rem;
+    }
+
+    /* ==================================================
+       RESPONSIVE
+       ================================================== */
+
+    @media (max-width: 650px) {
+
+      .app {
+        width: min(100% - 18px, 1000px);
+        margin: 18px auto;
+      }
+
+      .practice-card {
+        padding: 18px 14px 22px;
+      }
+
+      .block-bank {
+        grid-template-columns: 1fr;
+      }
+
+      .bank-item {
+        min-height: 125px;
+      }
+
+      .needed-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .workspace {
+        min-height: 240px;
+      }
+
+    }
+  </style>
+</head>
+
+<body>
+
+<main class="app">
+
+  <!-- ==================================================
+       BASE SELECTION
+       ================================================== -->
+
+  <section class="card settings-card">
+
+    <div class="section-label">
+      Choose the bases you want included
+    </div>
+
+    <div
+      id="baseButtons"
+      class="base-buttons">
+    </div>
+
+    <div class="settings-note">
+      Select one or more bases from 2 through 9.
+    </div>
+
+  </section>
+
+
+  <!-- ==================================================
+       PRACTICE
+       ================================================== -->
+
+  <section class="card practice-card">
+
+    <div class="instruction">
+      Build this number using the correct base blocks.
+    </div>
+
+    <div
+      id="problemNumber"
+      class="problem-number">
+    </div>
+
+
+    <!-- ==================================================
+         BLOCK BANK
+         ================================================== -->
+
+    <div class="bank-title">
+      Block Bank
+    </div>
+
+    <div class="bank-note">
+      Drag a block into the workspace, or click a block to add it.
+    </div>
+
+
+    <div class="block-bank">
+
+      <!-- FLAT -->
+
+      <div
+        id="flatBank"
+        class="bank-item"
+        draggable="true"
+        data-type="flat">
+
+        <div
+          id="flatVisual"
+          class="block-visual flat">
+        </div>
+
+        <div class="bank-name">
+          Flat
+        </div>
+
+        <div
+          id="flatValue"
+          class="bank-value">
+        </div>
+
+      </div>
+
+
+      <!-- LONG -->
+
+      <div
+        id="longBank"
+        class="bank-item"
+        draggable="true"
+        data-type="long">
+
+        <div
+          id="longVisual"
+          class="block-visual long">
+        </div>
+
+        <div class="bank-name">
+          Long
+        </div>
+
+        <div
+          id="longValue"
+          class="bank-value">
+        </div>
+
+      </div>
+
+
+      <!-- UNIT -->
+
+      <div
+        id="unitBank"
+        class="bank-item"
+        draggable="true"
+        data-type="unit">
+
+        <div
+          id="unitVisual"
+          class="block-visual unit">
+        </div>
+
+        <div class="bank-name">
+          Unit
+        </div>
+
+        <div class="bank-value">
+          Worth 1
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ==================================================
+         WORKSPACE
+         ================================================== -->
+
+    <div class="workspace-heading">
+
+      <div class="workspace-title">
+        Your Model
+      </div>
+
+      <button
+        id="clearButton"
+        class="clear-button"
+        type="button">
+        Clear
+      </button>
+
+    </div>
+
+
+    <div class="workspace-note">
+      Click any block in your model to remove it.
+    </div>
+
+
+    <div
+      id="workspace"
+      class="workspace">
+    </div>
+
+
+    <!-- ==================================================
+         COUNTS
+         ================================================== -->
+
+    <div class="count-summary">
+
+      <div class="count-chip">
+        Flats:
+        <strong id="flatCount">
+          0
+        </strong>
+      </div>
+
+      <div class="count-chip">
+        Longs:
+        <strong id="longCount">
+          0
+        </strong>
+      </div>
+
+      <div class="count-chip">
+        Units:
+        <strong id="unitCount">
+          0
+        </strong>
+      </div>
+
+    </div>
+
+
+    <!-- ==================================================
+         CONTROLS
+         ================================================== -->
+
+    <div class="controls">
+
+      <button
+        id="checkButton"
+        class="control-button check-button"
+        type="button">
+        Check Answer
+      </button>
+
+      <button
+        id="nextButton"
+        class="control-button next-button"
+        type="button">
+        Next Question
+      </button>
+
+    </div>
+
+
+    <div
+      id="feedback"
+      class="feedback"
+      aria-live="polite">
+    </div>
+
+  </section>
+
+</main>
+
+
+<script>
+
+  /*
+    ==================================================
+    DOM
+    ==================================================
+  */
+
+  const baseButtonsContainer =
+    document.getElementById(
+      "baseButtons"
+    );
+
+
+  const problemNumberElement =
+    document.getElementById(
+      "problemNumber"
+    );
+
+
+  const flatBank =
+    document.getElementById(
+      "flatBank"
+    );
+
+
+  const longBank =
+    document.getElementById(
+      "longBank"
+    );
+
+
+  const unitBank =
+    document.getElementById(
+      "unitBank"
+    );
+
+
+  const flatVisual =
+    document.getElementById(
+      "flatVisual"
+    );
+
+
+  const longVisual =
+    document.getElementById(
+      "longVisual"
+    );
+
+
+  const unitVisual =
+    document.getElementById(
+      "unitVisual"
+    );
+
+
+  const flatValue =
+    document.getElementById(
+      "flatValue"
+    );
+
+
+  const longValue =
+    document.getElementById(
+      "longValue"
+    );
+
+
+  const workspace =
+    document.getElementById(
+      "workspace"
+    );
+
+
+  const flatCountElement =
+    document.getElementById(
+      "flatCount"
+    );
+
+
+  const longCountElement =
+    document.getElementById(
+      "longCount"
+    );
+
+
+  const unitCountElement =
+    document.getElementById(
+      "unitCount"
+    );
+
+
+  const clearButton =
+    document.getElementById(
+      "clearButton"
+    );
+
+
+  const checkButton =
+    document.getElementById(
+      "checkButton"
+    );
+
+
+  const nextButton =
+    document.getElementById(
+      "nextButton"
+    );
+
+
+  const feedbackElement =
+    document.getElementById(
+      "feedback"
+    );
+
+
+  /*
+    ==================================================
+    STATE
+    ==================================================
+  */
+
+  const selectedBases =
+    new Set([
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ]);
+
+
+  let currentBase =
+    2;
+
+
+  let currentNumeral =
+    "";
+
+
+  let requiredCounts = {
+    flat: 0,
+    long: 0,
+    unit: 0
+  };
+
+
+  let placedCounts = {
+    flat: 0,
+    long: 0,
+    unit: 0
+  };
+
+
+  /*
+    ==================================================
+    HELPERS
+    ==================================================
+  */
+
+  function randomItem(
+    array
+  ) {
+
+    return array[
+      Math.floor(
+        Math.random() *
+        array.length
+      )
+    ];
+
+  }
+
+
+  /*
+    ==================================================
+    BASE SELECTOR
+    ==================================================
+  */
+
+  function createBaseButtons() {
+
+    for (
+      let base = 2;
+      base <= 9;
+      base++
+    ) {
+
+      const button =
+        document.createElement(
+          "button"
+        );
+
+
+      button.type =
+        "button";
+
+
+      button.className =
+        "base-button active";
+
+
+      button.textContent =
+        `Base ${base}`;
+
+
+      button.setAttribute(
+        "aria-pressed",
+        "true"
+      );
+
+
+      button.addEventListener(
+        "click",
+
+        function () {
+
+          if (
+            selectedBases.has(
+              base
+            )
+          ) {
+
+            /*
+              Keep at least one base
+              selected at all times.
+            */
+
+            if (
+              selectedBases.size ===
+              1
+            ) {
+
+              return;
+
+            }
+
+
+            selectedBases.delete(
+              base
+            );
+
+          }
+
+          else {
+
+            selectedBases.add(
+              base
+            );
+
+          }
+
+
+          const active =
+            selectedBases.has(
+              base
+            );
+
+
+          button.classList.toggle(
+            "active",
+            active
+          );
+
+
+          button.setAttribute(
+            "aria-pressed",
+            active
+              ? "true"
+              : "false"
+          );
+
+
+          newQuestion();
+
+        }
+
+      );
+
+
+      baseButtonsContainer.appendChild(
+        button
+      );
+
+    }
+
+  }
+
+
+  /*
+    ==================================================
+    GENERATE RANDOM NUMERAL
+    ==================================================
+
+    The number can have 1, 2, or 3 digits.
+
+    For a 2- or 3-digit number, at least
+    one digit AFTER the leading digit
+    must be nonzero.
+
+    This prevents overly simple problems
+    such as:
+
+      20
+      100
+      200
+      300
+
+    Examples that CAN occur:
+
+      23
+      104
+      132
+      203
+      314
+
+    ==================================================
+  */
+
+  function generateNumeral(
+    base
+  ) {
+
+    const length =
+      randomItem([
+        1,
+        2,
+        3
+      ]);
+
+
+    /*
+      --------------------------------
+      ONE-DIGIT NUMBER
+      --------------------------------
+    */
+
+    if (
+      length === 1
+    ) {
+
+      return String(
+        1 +
+        Math.floor(
+          Math.random() *
+          (
+            base -
+            1
+          )
+        )
+      );
+
+    }
+
+
+    /*
+      --------------------------------
+      TWO- OR THREE-DIGIT NUMBER
+      --------------------------------
+
+      Keep generating until at least
+      one digit after the leading digit
+      is nonzero.
+    */
+
+    let numeral;
+
+
+    do {
+
+      /*
+        First digit:
+        1 through base - 1.
+      */
+
+      numeral =
+        String(
+          1 +
+          Math.floor(
+            Math.random() *
+            (
+              base -
+              1
+            )
+          )
+        );
+
+
+      /*
+        Remaining digits:
+        0 through base - 1.
+      */
+
+      for (
+        let index = 1;
+        index < length;
+        index++
+      ) {
+
+        numeral +=
+          String(
+            Math.floor(
+              Math.random() *
+              base
+            )
+          );
+
+      }
+
+    }
+
+    while (
+      [...numeral.slice(1)].every(
+        digit =>
+          digit === "0"
+      )
+    );
+
+
+    return numeral;
+
+  }
+
+
+  /*
+    ==================================================
+    GET REQUIRED BLOCK COUNTS
+    ==================================================
+
+    Pad the numeral to three places.
+
+    Examples:
+
+      4   -> 004
+      23  -> 023
+      243 -> 243
+
+    Then:
+
+      first digit  = flats
+      second digit = longs
+      third digit  = units
+
+    ==================================================
+  */
+
+  function getRequiredCounts(
+    numeral
+  ) {
+
+    const padded =
+      numeral.padStart(
+        3,
+        "0"
+      );
+
+
+    return {
+
+      flat:
+        Number(
+          padded[0]
+        ),
+
+      long:
+        Number(
+          padded[1]
+        ),
+
+      unit:
+        Number(
+          padded[2]
+        )
+
+    };
+
+  }
+
+
+  /*
+    ==================================================
+    DRAW THE BLOCK BANK
+    ==================================================
+  */
+
+  function drawBlockVisuals() {
+
+    /*
+      --------------------------------
+      FLAT
+      --------------------------------
+
+      A flat is base × base.
+
+      Base 4:
+      4 × 4 = 16 little units.
+
+      Base 5:
+      5 × 5 = 25 little units.
+    */
+
+    flatVisual.innerHTML =
+      "";
+
+
+    flatVisual.style.gridTemplateColumns =
+      `repeat(${currentBase}, 1fr)`;
+
+
+    flatVisual.style.gridTemplateRows =
+      `repeat(${currentBase}, 1fr)`;
+
+
+    for (
+      let index = 0;
+      index <
+      currentBase *
+      currentBase;
+      index++
+    ) {
+
+      const cell =
+        document.createElement(
+          "span"
+        );
+
+
+      flatVisual.appendChild(
+        cell
+      );
+
+    }
+
+
+    /*
+      --------------------------------
+      LONG
+      --------------------------------
+
+      A long contains currentBase
+      individual units.
+    */
+
+    longVisual.innerHTML =
+      "";
+
+
+    longVisual.style.gridTemplateColumns =
+      `repeat(${currentBase}, 1fr)`;
+
+
+    longVisual.style.gridTemplateRows =
+      "1fr";
+
+
+    for (
+      let index = 0;
+      index < currentBase;
+      index++
+    ) {
+
+      const cell =
+        document.createElement(
+          "span"
+        );
+
+
+      longVisual.appendChild(
+        cell
+      );
+
+    }
+
+
+    /*
+      --------------------------------
+      UNIT
+      --------------------------------
+    */
+
+    unitVisual.innerHTML =
+      "<span></span>";
+
+
+    unitVisual.style.gridTemplateColumns =
+      "1fr";
+
+
+    unitVisual.style.gridTemplateRows =
+      "1fr";
+
+
+    /*
+      Update values underneath blocks.
+    */
+
+    flatValue.textContent =
+      `Worth ${
+        currentBase *
+        currentBase
+      }`;
+
+
+    longValue.textContent =
+      `Worth ${currentBase}`;
+
+  }
+
+
+  /*
+    ==================================================
+    CREATE A WORKSPACE BLOCK
+    ==================================================
+  */
+
+  function makePlacedVisual(
+    type
+  ) {
+
+    const visual =
+      document.createElement(
+        "div"
+      );
+
+
+    visual.className =
+      `block-visual ${type}`;
+
+
+    /*
+      FLAT
+    */
+
+    if (
+      type ===
+      "flat"
+    ) {
+
+      visual.style.gridTemplateColumns =
+        `repeat(${currentBase}, 1fr)`;
+
+
+      visual.style.gridTemplateRows =
+        `repeat(${currentBase}, 1fr)`;
+
+
+      for (
+        let index = 0;
+        index <
+        currentBase *
+        currentBase;
+        index++
+      ) {
+
+        visual.appendChild(
+          document.createElement(
+            "span"
+          )
+        );
+
+      }
+
+    }
+
+
+    /*
+      LONG
+    */
+
+    else if (
+      type ===
+      "long"
+    ) {
+
+      visual.style.gridTemplateColumns =
+        `repeat(${currentBase}, 1fr)`;
+
+
+      visual.style.gridTemplateRows =
+        "1fr";
+
+
+      for (
+        let index = 0;
+        index <
+        currentBase;
+        index++
+      ) {
+
+        visual.appendChild(
+          document.createElement(
+            "span"
+          )
+        );
+
+      }
+
+    }
+
+
+    /*
+      UNIT
+    */
+
+    else {
+
+      visual.style.gridTemplateColumns =
+        "1fr";
+
+
+      visual.style.gridTemplateRows =
+        "1fr";
+
+
+      visual.appendChild(
+        document.createElement(
+          "span"
+        )
+      );
+
+    }
+
+
+    return visual;
+
+  }
+
+
+  /*
+    ==================================================
+    ADD BLOCK
+    ==================================================
+  */
+
+  function addBlock(
+    type
+  ) {
+
+    /*
+      Remove the empty-space message
+      before adding a block.
+    */
+
+    const emptyMessage =
+      workspace.querySelector(
+        ".empty-message"
+      );
+
+
+    if (
+      emptyMessage
+    ) {
+
+      emptyMessage.remove();
+
+    }
+
+
+    const button =
+      document.createElement(
+        "button"
+      );
+
+
+    button.type =
+      "button";
+
+
+    button.className =
+      "placed-block";
+
+
+    button.dataset.type =
+      type;
+
+
+    button.setAttribute(
+      "aria-label",
+      `Remove ${type}`
+    );
+
+
+    button.appendChild(
+      makePlacedVisual(
+        type
+      )
+    );
+
+
+    /*
+      Clicking a placed block
+      removes that block.
+    */
+
+    button.addEventListener(
+      "click",
+
+      function () {
+
+        placedCounts[type]--;
+
+
+        button.remove();
+
+
+        updateCounts();
+
+
+        updateEmptyMessage();
+
+
+        clearFeedback();
+
+      }
+
+    );
+
+
+    workspace.appendChild(
+      button
+    );
+
+
+    placedCounts[type]++;
+
+
+    updateCounts();
+
+
+    updateEmptyMessage();
+
+
+    clearFeedback();
+
+  }
+
+
+  /*
+    ==================================================
+    EMPTY MESSAGE
+    ==================================================
+  */
+
+  function updateEmptyMessage() {
+
+    const existingMessage =
+      workspace.querySelector(
+        ".empty-message"
+      );
+
+
+    if (
+      existingMessage
+    ) {
+
+      existingMessage.remove();
+
+    }
+
+
+    const totalBlocks =
+      placedCounts.flat +
+      placedCounts.long +
+      placedCounts.unit;
+
+
+    if (
+      totalBlocks ===
+      0
+    ) {
+
+      const message =
+        document.createElement(
+          "div"
+        );
+
+
+      message.className =
+        "empty-message";
+
+
+      message.textContent =
+        "Drag or click blocks to build the number.";
+
+
+      workspace.appendChild(
+        message
+      );
+
+    }
+
+  }
+
+
+  /*
+    ==================================================
+    UPDATE COUNT DISPLAY
+    ==================================================
+  */
+
+  function updateCounts() {
+
+    flatCountElement.textContent =
+      placedCounts.flat;
+
+
+    longCountElement.textContent =
+      placedCounts.long;
+
+
+    unitCountElement.textContent =
+      placedCounts.unit;
+
+  }
+
+
+  /*
+    ==================================================
+    CLEAR WORKSPACE
+    ==================================================
+  */
+
+  function clearWorkspace() {
+
+    workspace.innerHTML =
+      "";
+
+
+    placedCounts = {
+      flat: 0,
+      long: 0,
+      unit: 0
+    };
+
+
+    updateCounts();
+
+
+    updateEmptyMessage();
+
+
+    clearFeedback();
+
+  }
+
+
+  /*
+    ==================================================
+    FEEDBACK
+    ==================================================
+  */
+
+  function clearFeedback() {
+
+    feedbackElement.className =
+      "feedback";
+
+
+    feedbackElement.innerHTML =
+      "";
+
+  }
+
+
+  function buildIncorrectFeedback() {
+
+    return `
+      <div class="feedback-head">
+
+        <strong>
+          Not quite.
+        </strong>
+
+        Look at each digit in
+
+        <span class="math-number">
+          ${currentNumeral}<sub>${currentBase}</sub>
+        </span>.
+
+      </div>
+
+
+      <div class="feedback-work">
+
+        Each digit tells you how many blocks
+        of that place value are needed.
+
+        <div class="needed-grid">
+
+          <div class="needed-card">
+
+            <span>
+              Flats
+              (${
+                currentBase *
+                currentBase
+              } each)
+            </span>
+
+            <strong>
+              ${requiredCounts.flat}
+            </strong>
+
+          </div>
+
+
+          <div class="needed-card">
+
+            <span>
+              Longs
+              (${currentBase} each)
+            </span>
+
+            <strong>
+              ${requiredCounts.long}
+            </strong>
+
+          </div>
+
+
+          <div class="needed-card">
+
+            <span>
+              Units
+              (1 each)
+            </span>
+
+            <strong>
+              ${requiredCounts.unit}
+            </strong>
+
+          </div>
+
+        </div>
+
+      </div>
+    `;
+
+  }
+
+
+  /*
+    ==================================================
+    CHECK ANSWER
+    ==================================================
+  */
+
+  function checkAnswer() {
+
+    const correct =
+      placedCounts.flat ===
+        requiredCounts.flat
+      &&
+      placedCounts.long ===
+        requiredCounts.long
+      &&
+      placedCounts.unit ===
+        requiredCounts.unit;
+
+
+    if (
+      correct
+    ) {
+
+      feedbackElement.className =
+        "feedback correct";
+
+
+      feedbackElement.innerHTML =
+        `
+          <strong>
+            ✓ Correct!
+          </strong>
+
+          Your model represents
+
+          <span class="math-number">
+            ${currentNumeral}<sub>${currentBase}</sub>
+          </span>.
+        `;
+
+
+      return;
+
+    }
+
+
+    feedbackElement.className =
+      "feedback incorrect";
+
+
+    feedbackElement.innerHTML =
+      buildIncorrectFeedback();
+
+  }
+
+
+  /*
+    ==================================================
+    NEW QUESTION
+    ==================================================
+  */
+
+  function newQuestion() {
+
+    /*
+      Pick one of the selected bases.
+    */
+
+    currentBase =
+      randomItem(
+        [...selectedBases]
+      );
+
+
+    /*
+      Generate a varied numeral.
+    */
+
+    currentNumeral =
+      generateNumeral(
+        currentBase
+      );
+
+
+    /*
+      Determine how many of each
+      block type are required.
+    */
+
+    requiredCounts =
+      getRequiredCounts(
+        currentNumeral
+      );
+
+
+    /*
+      Display numeral.
+    */
+
+    problemNumberElement.innerHTML =
+      `
+        ${currentNumeral}<sub>${currentBase}</sub>
+      `;
+
+
+    /*
+      Redraw block bank for
+      the selected base.
+    */
+
+    drawBlockVisuals();
+
+
+    /*
+      Empty the student's model.
+    */
+
+    clearWorkspace();
+
+  }
+
+
+  /*
+    ==================================================
+    CLICK BLOCKS TO ADD
+    ==================================================
+  */
+
+  [
+    flatBank,
+    longBank,
+    unitBank
+  ].forEach(
+    bankItem => {
+
+      bankItem.addEventListener(
+        "click",
+
+        function () {
+
+          addBlock(
+            bankItem.dataset.type
+          );
+
+        }
+
+      );
+
+    }
+  );
+
+
+  /*
+    ==================================================
+    DRAG FROM BANK
+    ==================================================
+  */
+
+  [
+    flatBank,
+    longBank,
+    unitBank
+  ].forEach(
+    bankItem => {
+
+      bankItem.addEventListener(
+        "dragstart",
+
+        function (
+          event
+        ) {
+
+          event.dataTransfer.setData(
+            "text/plain",
+            bankItem.dataset.type
+          );
+
+
+          event.dataTransfer.effectAllowed =
+            "copy";
+
+        }
+
+      );
+
+    }
+  );
+
+
+  /*
+    ==================================================
+    DROP INTO WORKSPACE
+    ==================================================
+  */
+
+  workspace.addEventListener(
+    "dragover",
+
+    function (
+      event
+    ) {
+
+      event.preventDefault();
+
+
+      workspace.classList.add(
+        "drag-over"
+      );
+
+
+      event.dataTransfer.dropEffect =
+        "copy";
+
+    }
+
+  );
+
+
+  workspace.addEventListener(
+    "dragleave",
+
+    function () {
+
+      workspace.classList.remove(
+        "drag-over"
+      );
+
+    }
+
+  );
+
+
+  workspace.addEventListener(
+    "drop",
+
+    function (
+      event
+    ) {
+
+      event.preventDefault();
+
+
+      workspace.classList.remove(
+        "drag-over"
+      );
+
+
+      const type =
+        event.dataTransfer.getData(
+          "text/plain"
+        );
+
+
+      if (
+        type === "flat" ||
+        type === "long" ||
+        type === "unit"
+      ) {
+
+        addBlock(
+          type
+        );
+
+      }
+
+    }
+
+  );
+
+
+  /*
+    ==================================================
+    BUTTONS
+    ==================================================
+  */
+
+  clearButton.addEventListener(
+    "click",
+    clearWorkspace
+  );
+
+
+  checkButton.addEventListener(
+    "click",
+    checkAnswer
+  );
+
+
+  nextButton.addEventListener(
+    "click",
+    newQuestion
+  );
+
+
+  /*
+    ==================================================
+    START
+    ==================================================
+  */
+
+  createBaseButtons();
+
+  newQuestion();
+
+</script>
+
+</body>
+</html>
